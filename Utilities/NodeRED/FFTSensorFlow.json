@@ -1,0 +1,499 @@
+[
+    {
+        "id": "8839682c.a311a8",
+        "type": "ibmiot in",
+        "z": "6a85ecff.69b954",
+        "authentication": "apiKey",
+        "apiKey": "bde7d650.530f58",
+        "inputType": "evt",
+        "deviceId": "d1",
+        "applicationId": "",
+        "deviceType": "astdevice",
+        "eventType": "+",
+        "commandType": "",
+        "format": "json",
+        "name": "fft",
+        "service": "registered",
+        "allDevices": false,
+        "allApplications": "",
+        "allDeviceTypes": false,
+        "allEvents": true,
+        "allCommands": "",
+        "allFormats": "",
+        "qos": 0,
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "2710709f.d9522",
+                "2cc230c5.7d497"
+            ]
+        ]
+    },
+    {
+        "id": "2710709f.d9522",
+        "type": "function",
+        "z": "6a85ecff.69b954",
+        "name": "Data parser",
+        "func": "var AccX = {};\nvar AccY = {};\nvar AccZ = {};\nvar temperature = {};\nvar humidity = {};\nvar pressure = {};\nvar motor_status = {};\nvar maxFreq = {};\nvar maxFreqAmp = {};\n\nAccX.payload = msg.payload.d.Acc_X;\nAccX.topic   = \"AccX\";\nAccY.payload = msg.payload.d.Acc_Y;\nAccY.topic   = \"AccY\";\nAccZ.payload = msg.payload.d.Acc_Z;\nAccZ.topic   = \"AccZ\";\ntemperature.payload = msg.payload.d.A_Temperature;\ntemperature.topic   = \"Temp\";\nhumidity.payload = msg.payload.d.A_Humidity;\nhumidity.topic   = \"Hum\";\npressure.payload = msg.payload.d.A_Pressure;\npressure.topic   = \"Pressure\";\n\nif (msg.payload.d.Motor_status === \"OK\" ){\n    motor_status.payload = 0;\n}\nelse if (msg.payload.d.Motor_status === \"Warning\" ){\n    motor_status.payload = 1;\n}\nelse{\n    motor_status.payload = 2;\n}\nmotor_status.topic = \"motor\";\n\nmaxFreq.payload = msg.payload.d.FFT_max_f;\nmaxFreq.topic   = \"maxFreq\";\n\nmaxFreqAmp.payload = msg.payload.d.FFT_max_f_amp;\nmaxFreqAmp.topic   = \"maxFreqAmp\";\n\nreturn [AccX, AccY, AccZ, temperature, humidity, pressure, motor_status, maxFreq, maxFreqAmp];",
+        "outputs": "9",
+        "noerr": 0,
+        "x": 348,
+        "y": 260,
+        "wires": [
+            [
+                "50f5d514.271d3c"
+            ],
+            [
+                "96ccf370.706ac"
+            ],
+            [
+                "ec370f04.78ccb"
+            ],
+            [
+                "408cd3e8.822f2c"
+            ],
+            [
+                "49d8400c.7f49"
+            ],
+            [
+                "ad8ce961.facc58"
+            ],
+            [
+                "45119f45.80856",
+                "38d927b4.9c2ce8"
+            ],
+            [
+                "11ecff73.0d6311"
+            ],
+            [
+                "12dee633.27e99a"
+            ]
+        ]
+    },
+    {
+        "id": "50f5d514.271d3c",
+        "type": "ui_chart",
+        "z": "6a85ecff.69b954",
+        "name": "Acc.X",
+        "group": "1e65a3c3.1358cc",
+        "order": 1,
+        "width": "5",
+        "height": "5",
+        "label": "Acc.X",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "auto",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "60",
+        "removeOlderPoints": "100",
+        "removeOlderUnit": "1",
+        "cutout": 0,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff8080",
+            "#2ca02c",
+            "#98df8a",
+            "#ff0000",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "x": 530,
+        "y": 80,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "49d8400c.7f49",
+        "type": "ui_gauge",
+        "z": "6a85ecff.69b954",
+        "name": "Humidity",
+        "group": "1e65a3c3.1358cc",
+        "order": 0,
+        "width": "6",
+        "height": "4",
+        "gtype": "gage",
+        "title": "Humidity",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 900,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "ad8ce961.facc58",
+        "type": "ui_gauge",
+        "z": "6a85ecff.69b954",
+        "name": "Pressure",
+        "group": "1e65a3c3.1358cc",
+        "order": 0,
+        "width": "6",
+        "height": "4",
+        "gtype": "gage",
+        "title": "Pressure",
+        "label": "units",
+        "format": "{{value}}",
+        "min": "260",
+        "max": "1260",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 900,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "45119f45.80856",
+        "type": "ui_gauge",
+        "z": "6a85ecff.69b954",
+        "name": "Alert motor",
+        "group": "3c320776.1895c8",
+        "order": 0,
+        "width": "5",
+        "height": "3",
+        "gtype": "wave",
+        "title": "",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "2",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 871,
+        "y": 437,
+        "wires": []
+    },
+    {
+        "id": "b49331cb.49b7c",
+        "type": "ui_toast",
+        "z": "6a85ecff.69b954",
+        "position": "dialog",
+        "displayTime": "3",
+        "highlight": "",
+        "outputs": 1,
+        "ok": "Motor Alarm",
+        "cancel": "",
+        "topic": "",
+        "name": "Motor Alarm",
+        "x": 823,
+        "y": 487,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "38d927b4.9c2ce8",
+        "type": "function",
+        "z": "6a85ecff.69b954",
+        "name": "Motor alert notification",
+        "func": "var motor_alert = {};\n\nif (msg.payload == 2){\n    motor_alert.payload = \"Alarm motor\";\n    return motor_alert;\n}\nelse {\n    return null;\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 473,
+        "y": 523,
+        "wires": [
+            [
+                "b49331cb.49b7c",
+                "89929609.31e538"
+            ]
+        ]
+    },
+    {
+        "id": "89929609.31e538",
+        "type": "ui_audio",
+        "z": "6a85ecff.69b954",
+        "name": "Alert motor",
+        "group": "3c320776.1895c8",
+        "voice": "3",
+        "always": "",
+        "x": 826,
+        "y": 531,
+        "wires": []
+    },
+    {
+        "id": "408cd3e8.822f2c",
+        "type": "ui_gauge",
+        "z": "6a85ecff.69b954",
+        "name": "Temperature",
+        "group": "1e65a3c3.1358cc",
+        "order": 0,
+        "width": "6",
+        "height": "4",
+        "gtype": "gage",
+        "title": "Temperature  ",
+        "label": "units",
+        "format": "{{value}}",
+        "min": "-10",
+        "max": "40",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 890,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "2cc230c5.7d497",
+        "type": "debug",
+        "z": "6a85ecff.69b954",
+        "name": "mydebug",
+        "active": true,
+        "console": "false",
+        "complete": "true",
+        "x": 375,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "96ccf370.706ac",
+        "type": "ui_chart",
+        "z": "6a85ecff.69b954",
+        "name": "Acc.Y",
+        "group": "1e65a3c3.1358cc",
+        "order": 1,
+        "width": "5",
+        "height": "5",
+        "label": "Acc.Y",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "auto",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "60",
+        "removeOlderPoints": "100",
+        "removeOlderUnit": "1",
+        "cutout": 0,
+        "colors": [
+            "#008000",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "x": 710,
+        "y": 80,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "ec370f04.78ccb",
+        "type": "ui_chart",
+        "z": "6a85ecff.69b954",
+        "name": "Acc.Z",
+        "group": "1e65a3c3.1358cc",
+        "order": 1,
+        "width": "5",
+        "height": "5",
+        "label": "Acc.Z",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "auto",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "60",
+        "removeOlderPoints": "100",
+        "removeOlderUnit": "1",
+        "cutout": 0,
+        "colors": [
+            "#0080ff",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "x": 890,
+        "y": 80,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "11ecff73.0d6311",
+        "type": "ui_chart",
+        "z": "6a85ecff.69b954",
+        "name": "FTTMaxFreq",
+        "group": "3c3d53bb.2c120c",
+        "order": 1,
+        "width": "5",
+        "height": "5",
+        "label": "Max Frequency",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "Max Frequency",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "1000",
+        "removeOlder": "60",
+        "removeOlderPoints": "100",
+        "removeOlderUnit": "1",
+        "cutout": 0,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "x": 1090,
+        "y": 280,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "12dee633.27e99a",
+        "type": "ui_chart",
+        "z": "6a85ecff.69b954",
+        "name": "FFTMaxFreqAmp",
+        "group": "3c3d53bb.2c120c",
+        "order": 1,
+        "width": "5",
+        "height": "5",
+        "label": "Max Frequency Amplitude",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "Max Frequency Amplitude",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "500",
+        "removeOlder": "60",
+        "removeOlderPoints": "100",
+        "removeOlderUnit": "1",
+        "cutout": 0,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "x": 1110,
+        "y": 340,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "bde7d650.530f58",
+        "type": "ibmiot",
+        "z": "",
+        "name": "Feb",
+        "keepalive": "60",
+        "serverName": "4zpjqk.messaging.internetofthings.ibmcloud.com",
+        "cleansession": true,
+        "appId": "",
+        "shared": false
+    },
+    {
+        "id": "1e65a3c3.1358cc",
+        "type": "ui_group",
+        "z": "",
+        "name": "Environmental",
+        "tab": "6830daa5.e76404",
+        "order": 1,
+        "disp": true,
+        "width": "20"
+    },
+    {
+        "id": "3c320776.1895c8",
+        "type": "ui_group",
+        "z": "",
+        "name": "Alert",
+        "tab": "b4458266.b2567",
+        "order": 4,
+        "disp": true,
+        "width": "6"
+    },
+    {
+        "id": "3c3d53bb.2c120c",
+        "type": "ui_group",
+        "z": "",
+        "name": "Vibration - FFT",
+        "tab": "6830daa5.e76404",
+        "order": 2,
+        "disp": true,
+        "width": "15"
+    },
+    {
+        "id": "6830daa5.e76404",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Charts",
+        "icon": "dashboard",
+        "order": 2
+    },
+    {
+        "id": "b4458266.b2567",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Home",
+        "icon": "home",
+        "order": "1"
+    }
+]
